@@ -147,7 +147,7 @@ class ParseNmea:
         
     def DoNotHaveFix(self, latitude):
         """
-        Check to make sure the lat is populated, indicating have satellites
+        Check to make sure the lat is populated, indicating have satelites
         fix
         """
         if len(latitude) == 0:
