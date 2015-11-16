@@ -1,10 +1,11 @@
 #!/usr/bin/env python
 """
-GpsTrackPRocessing.py -- Convert NMEA GPS data to csv and do subsequent processing.
+GpsTrackPRocessing.py -- Convert NMEA GPS data to my evil purposes and do
+subsequent processing.
 Usage:
     $ ./GpsTrackProcessing.py
-    
-    Script will prompt for input file. File should be in raw NMEA GPS 
+
+    Script will prompt for input file. File should be in raw NMEA GPS
     data format.
 
 There are 19 interpreted sentences in NMEA data.  Of these, we are currently
@@ -76,7 +77,7 @@ def FindStartEndIndex(gpsData, stats):
             xy=(longs[startIndex], lats[startIndex]),
             xytext=(-50,-30),
             textcoords='offset points',
-            arrowprops=dict(facecolor='black', shrink=0.05))
+            arrowprops=dict(facecolor='white', shrink=0.05))
 
         plt.xlabel('Longitude')
         plt.ylabel('Latitude')
@@ -84,25 +85,19 @@ def FindStartEndIndex(gpsData, stats):
 
     	#lay the image under the graph
     	#read a png file to map on
-        im = plt.imread('Image/JogStartSat.png')
+        # im = plt.imread('Image/JogStartSat.png')
         #adjust these values based on your location and map, lat and long are in decimal degrees
-        TRX = -77.102308          #top right longitude (orig -77.084388)
-        TRY = 38.839869            #top right latitude (orig 38.843056)
-        BLX = -77.104708          #bottom left longitude (orig -77.105987)
-        BLY = 38.838114             #bottom left latitude
+        # TRX = -77.102308          #top right longitude (orig -77.084388)
+        # TRY = 38.839869            #top right latitude (orig 38.843056)
+        # BLX = -77.104708          #bottom left longitude (orig -77.105987)
+        # BLY = 38.838114             #bottom left latitude
 
-        #im = plt.imread('JogStartMall.png')
+        im = plt.imread('Image/JogStartMall.png')
         #adjust these values based on your location and map, lat and long are in decimal degrees
-        #TRX = -77.02749          #top right longitude (orig -77.084388)
-        #TRY = 38.88953            #top right latitude (orig 38.843056)
-        #BLX = -77.02957          #bottom left longitude (orig -77.105987)
-        #BLY = 38.88773             #bottom left latitude
-
-        # map version
-        #TRX = -77.101736          #top right longitude (orig -77.084388)
-        #TRY = 38.839353            #top right latitude (orig 38.843056)
-        #BLX = -77.104546          #bottom left longitude (orig -77.105987)
-        #BLY = 38.838198             #bottom left latitude
+        TRX = -77.02749          #top right longitude (orig -77.084388)
+        TRY = 38.88953            #top right latitude (orig 38.843056)
+        BLX = -77.02957          #bottom left longitude (orig -77.105987)
+        BLY = 38.88773             #bottom left latitude
 
         plt.imshow(im,extent=[BLX, TRX, BLY, TRY])
         plt.show()
@@ -141,16 +136,16 @@ def PlotAnnotatedTrack(gpsData, annotation, IsCommute, stats):
         BLX = -77.210489          #bottom left longitude (orig -77.105987)
         BLY = 38.761480             #bottom left latitude
     else:
-        im = plt.imread('Image/Jog1.png')
-        TRX = -77.084556          #top right longitude (orig -77.084388)
-        TRY = 38.843009            #top right latitude (orig 38.843056)
-        BLX = -77.105911          #bottom left longitude (orig -77.105987)
-        BLY = 38.829715             #bottom left latitude
-        #im = plt.imread('MallJog.png')
-        #TRX = -77.00392          #top right longitude (orig -77.084388)
-        #TRY = 38.9005            #top right latitude (orig 38.843056)
-        #BLX = -77.0725          #bottom left longitude (orig -77.105987)
-        #BLY = 38.8717             #bottom left latitude
+        # im = plt.imread('Image/Jog1.png')
+        # TRX = -77.084556          #top right longitude (orig -77.084388)
+        # TRY = 38.843009            #top right latitude (orig 38.843056)
+        # BLX = -77.105911          #bottom left longitude (orig -77.105987)
+        # BLY = 38.829715             #bottom left latitude
+        im = plt.imread('Image/MallJog.png')
+        TRX = -77.00392          #top right longitude (orig -77.084388)
+        TRY = 38.9005            #top right latitude (orig 38.843056)
+        BLX = -77.0725          #bottom left longitude (orig -77.105987)
+        BLY = 38.8717             #bottom left latitude
     #adjust these values based on your location and map, lat and long are in decimal degrees
     plt.imshow(im,extent=[BLX, TRX, BLY, TRY])
 
@@ -198,30 +193,30 @@ def IsCommuteTrack(bbox, avgMph):
 def main():
     # construct the file parser
     parser = ParseNmea.ParseNmea()
-    
+
     # construct the stats calculator
     stats = GpsTrackStats.GpsTrackStats()
-    
+
     # select an input file
     #root = tk.Tk()
     #root.withdraw()
     inputFile = filedialog.askopenfilename(filetypes=[("text files", "*.TXT")])
-    
+
     parser.ParseGpsNmeaFile(inputFile)
-    # If the gpsData is length zero the file was not in the 
+    # If the gpsData is length zero the file was not in the
     # GPGGA, GPRMC pair format. Try the just GPRMC format
     if len(parser.gpsData) == 0:
         parser.ParseGpsNmeaGprmcFile(sys.argv[1])
         if len(parser.gpsData) == 0:
             print("Error parsing data. Fix input file?")
             exit
-        
-    # make a local copy of the GPS data    
+
+    # make a local copy of the GPS data
     gpsData = parser.gpsData
-    
+
     # done with the parser so nuke it (not required)
     del parser
-    
+
     stats.ReportTimingStats(gpsData)
     bbox = stats.CalcBoundingBox(gpsData)
     print( "Bounding Box %.5f +/- %.6f, %.5f +/- %.6f" % \
