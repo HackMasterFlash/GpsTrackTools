@@ -10,7 +10,7 @@ import numpy
 
 class GpsTrackStats:
     """
-    A class to calculate statistics on GPS Tracks. The format for the 
+    A class to calculate statistics on GPS Tracks. The format for the
     csv track data is:
         0: Timestamp (HHmmss.mmm)
         1: latitude
@@ -23,7 +23,7 @@ class GpsTrackStats:
         8: course
         9: datestamp (DDMMYY)
     """
-    
+
     def ExtractTimeString(self, csvLine):
         """
         Extract the date and time from the csv formated line of GPS data
@@ -39,11 +39,11 @@ class GpsTrackStats:
             splitLine[9][2:4] + "/" + \
             splitLine[9][:2] + "/" + \
             splitLine[9][4:]
-        return time 
-        
+        return time
+
     def ExtractDateTime(self, csvLine):
         """
-        Extract the date and time from a CSV input line and 
+        Extract the date and time from a CSV input line and
         stick them in a Python datetime object
         """
         try:
@@ -62,7 +62,7 @@ class GpsTrackStats:
             print( "Element 0 = %s" % splitLine[0])
             aDateTime = "ERROR"
         return aDateTime
-        
+
     def ReportTimingStats(self, gpsData):
         """
         Report timing information about a list of CSV lines of GPS data points
@@ -90,7 +90,7 @@ class GpsTrackStats:
         speedMph = []
         timeStamp = []
         lastTime = 0
-    
+
         for i in range(len(gpsData)):
             splitLine = gpsData[i].split(',')
             distance.append(float(splitLine[4]))
@@ -119,7 +119,7 @@ class GpsTrackStats:
             splitLine = gpsData[i].split(',')
             speedMph.append(float(splitLine[7])*1.15078) # Knots to mph
         return numpy.array(speedMph).mean()
-    
+
     def CalcSplitIndices(self, distance, splitDistance):
         sum = 0.0
         splitIndex = [0] # split indices
@@ -134,7 +134,7 @@ class GpsTrackStats:
         #for i in range(len(qmi)-1):
         #    print distance[:qmi[i+1]].sum()*0.000621371 # meter to miles
         return splitIndex
-    
+
     def ReportSplits(self, distance, time, splitDistance):
         print ("Split Times:")
         qmi = self.CalcSplitIndices(distance, splitDistance) #402.336
@@ -157,14 +157,14 @@ class GpsTrackStats:
         annotation.append([len(distance)-1,cumDist, pace])
         print( "%.3f, %.3f, %.1f, %s" % (cumDist, segmentDistance, delta.seconds, pace))
         return annotation
-    
+
     def CalcMinPerMile(self, timePeriod, miles):
         vanityFactor = 1.0 # Set this to fudge your time on the plots for demos :)
         minutesPerMile = ((timePeriod.seconds / miles)/60.0) * vanityFactor
         fractMinPerMile = minutesPerMile - int(minutesPerMile)
         result = "%02d:%04.1f" % (int(minutesPerMile), fractMinPerMile*60.0)
         return result
-    
+
     def CalcSpeedMetrics(self, gpsData, delta):
         [distance, knots, mps, MpsCalc, mph, time] = self.ExtractDistanceAndSpeed(gpsData)
         print ("Max speeds:")
@@ -185,7 +185,7 @@ class GpsTrackStats:
         result = self.CalcMinPerMile(delta, miles)
         print( "  " + result)
         return [distance, time]
-    
+
     def CalculateTrackStatistics(self, gpsData, delta, splitDistance):
         """
         Report on the statistics of this gpsTrack
@@ -197,7 +197,7 @@ class GpsTrackStats:
         [distance,time] = self.CalcSpeedMetrics(gpsData, delta)
         annotation = self.ReportSplits(distance,time, splitDistance)
         return annotation
-        
+
     def CalcBoundingBox(self, gpsData):
         print ("Calculating bounding box")
         [latitude, longitude] = self.ExtractLatsAndLongs(gpsData, len(gpsData))
@@ -210,7 +210,7 @@ class GpsTrackStats:
         avgLat = lats.mean()
         avgLong = longs.mean()
         return [avgLat, avgLong, maxLat - minLat, maxLong - minLong]
-    
+
     def ExtractLatsAndLongs(self, gpsData, numberOfPoints):
         """
         Pull off the first numberOfPoints of lat and long from gpsData
